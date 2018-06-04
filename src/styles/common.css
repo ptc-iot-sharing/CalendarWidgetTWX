@@ -1,0 +1,107 @@
+.fc-day-header {
+    border: none !important;
+}
+
+.fc-head-container.fc-widget-header {
+    border: 1px solid transparent !important;
+    border-bottom-color: rgba(0, 0, 0, .1) !important;
+
+    font-weight: 500 !important;
+    font-size: 16px !important;
+
+    color: rgba(0, 0, 0, .66) !important;
+}
+
+.fc-center {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+
+.fc-day-header.fc-widget-header{
+    padding-bottom: 8px !important;
+    padding-top: 8px !important;
+}
+
+.fc-button {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    padding: 4px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+}
+
+.fc-minor > .fc-widget-content {
+    border-top-style: solid !important;
+    border-color: transparent !important;
+}
+
+td.fc-widget-content {
+    border-color: rgba(0, 0, 0, .05) !important;
+}
+
+.fc-axis.fc-time.fc-widget-content {
+    border-right: 1px solid transparent !important;
+    color: rgba(0, 0, 0, .2) !important;
+    font-size: 12px !important;
+}
+
+.fc-body > tr > .fc-widget-content {
+    border: none !important;
+}
+
+.fc-row:first-child table {
+    border: none !important;
+}
+
+.fc-axis.fc-widget-header {
+    border-color: transparent !important;
+}
+
+.fc-divider.fc-widget-header {
+    background-color: rgba(0, 0, 0, .1) !important;
+    border-color: rgba(0, 0, 0, .1) !important;
+}
+
+.fc-content-skeleton .fc-axis {
+    border: none !important;
+}
+
+td.fc-today {
+    background-color: rgba(0, 128, 255, 0.1) !important;
+}
+
+.CalendarBoundingBox.responsive {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.CalendarEvent {
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, .1), 0px 2px 6px rgba(0, 0, 0, .1), 0px 0px 0px 1px rgba(0, 0, 0, .2);
+    border: none !important;
+    padding: 8px;
+    box-sizing: border-box;
+
+    font-size: 14px !important;
+
+    background-color: rgba(31, 139, 255, 0.39) !important;
+    color: rgb(41, 106, 172) !important;
+    border-left: 2px solid rgb(67, 149, 231) !important;
+
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+}
+
+.CalendarEvent .fc-time {
+    font-weight: bold;
+}
+
+.fc-list-item:hover td {
+    background-color: transparent !important;
+}
+
+.fc-list-item {
+    cursor: pointer;
+}
