@@ -7,4 +7,163 @@
       <UIResources/>
     </Widget>
   </Widgets>
+    <StateDefinitions>
+    <StateDefinition description="Duplicate this state definition for a starter calendar state definition template." name="CalendarExampleStates" aspect.isEditableExtensionObject="true">
+      <content>        <![CDATA[{
+  "stateDefinitions" : [ {
+    "defaultStyleDefinition" : {
+      "backgroundColor" : "rgba(244,67,54,0.33)",
+      "displayString" : "",
+      "fontEmphasisBold" : false,
+      "fontEmphasisItalic" : false,
+      "fontEmphasisUnderline" : false,
+      "foregroundColor" : "#b71c1c",
+      "image" : "",
+      "lineColor" : "#d32f2f",
+      "lineStyle" : "solid",
+      "lineThickness" : 1,
+      "secondaryBackgroundColor" : "",
+      "textSize" : "normal"
+    },
+    "defaultValue" : "Running Event 0",
+    "description" : "",
+    "displayString" : "",
+    "name" : ""
+  }, {
+    "defaultStyleDefinition" : {
+      "backgroundColor" : "rgba(156,39,176,0.4)",
+      "displayString" : "",
+      "fontEmphasisBold" : false,
+      "fontEmphasisItalic" : false,
+      "fontEmphasisUnderline" : false,
+      "foregroundColor" : "#4a148c",
+      "image" : "",
+      "lineColor" : "#7b1fa2",
+      "lineStyle" : "solid",
+      "lineThickness" : 1,
+      "secondaryBackgroundColor" : "",
+      "textSize" : "normal"
+    },
+    "defaultValue" : "Running Event 1",
+    "description" : "",
+    "displayString" : "",
+    "name" : ""
+  }, {
+    "defaultStyleDefinition" : {
+      "backgroundColor" : "rgba(3,169,244,0.4)",
+      "displayString" : "",
+      "fontEmphasisBold" : false,
+      "fontEmphasisItalic" : false,
+      "fontEmphasisUnderline" : false,
+      "foregroundColor" : "#01579b",
+      "image" : "",
+      "lineColor" : "#0288d1",
+      "lineStyle" : "solid",
+      "lineThickness" : 1,
+      "secondaryBackgroundColor" : "",
+      "textSize" : "normal"
+    },
+    "defaultValue" : "Running Event 5",
+    "description" : "",
+    "displayString" : "",
+    "name" : ""
+  }, {
+    "defaultStyleDefinition" : {
+      "backgroundColor" : "rgba(0,150,136,0.4)",
+      "displayString" : "",
+      "fontEmphasisBold" : false,
+      "fontEmphasisItalic" : false,
+      "fontEmphasisUnderline" : false,
+      "foregroundColor" : "#004d40",
+      "image" : "",
+      "lineColor" : "#00796b",
+      "lineStyle" : "solid",
+      "lineThickness" : 1,
+      "secondaryBackgroundColor" : "",
+      "textSize" : "normal"
+    },
+    "defaultValue" : "Running Event 6",
+    "description" : "",
+    "displayString" : "",
+    "name" : ""
+  }, {
+    "defaultStyleDefinition" : {
+      "backgroundColor" : "rgba(255,235,59,0.4)",
+      "displayString" : "",
+      "fontEmphasisBold" : false,
+      "fontEmphasisItalic" : false,
+      "fontEmphasisUnderline" : false,
+      "foregroundColor" : "#f57f17",
+      "image" : "",
+      "lineColor" : "#fbc02d",
+      "lineStyle" : "solid",
+      "lineThickness" : 1,
+      "secondaryBackgroundColor" : "",
+      "textSize" : "normal"
+    },
+    "defaultValue" : "Running Event 7",
+    "description" : "",
+    "displayString" : "",
+    "name" : ""
+  }, {
+    "defaultStyleDefinition" : {
+      "backgroundColor" : "rgba(205,220,57,0.4)",
+      "displayString" : "",
+      "fontEmphasisBold" : false,
+      "fontEmphasisItalic" : false,
+      "fontEmphasisUnderline" : false,
+      "foregroundColor" : "#827717",
+      "image" : "",
+      "lineColor" : "#afb42b",
+      "lineStyle" : "solid",
+      "lineThickness" : 1,
+      "secondaryBackgroundColor" : "",
+      "textSize" : "normal"
+    },
+    "defaultValue" : "Running Event 8",
+    "description" : "",
+    "displayString" : "",
+    "name" : ""
+  }, {
+    "defaultStyleDefinition" : {
+      "backgroundColor" : "rgba(255,152,0,0.4)",
+      "displayString" : "",
+      "fontEmphasisBold" : false,
+      "fontEmphasisItalic" : false,
+      "fontEmphasisUnderline" : false,
+      "foregroundColor" : "#e65100",
+      "image" : "",
+      "lineColor" : "#f57c00",
+      "lineStyle" : "solid",
+      "lineThickness" : 1,
+      "secondaryBackgroundColor" : "",
+      "textSize" : "normal"
+    },
+    "defaultValue" : "Running Event 9",
+    "description" : "",
+    "displayString" : "",
+    "name" : ""
+  }, {
+    "defaultStyleDefinition" : {
+      "backgroundColor" : "rgba(31,139,255,0.39)",
+      "displayString" : "",
+      "fontEmphasisBold" : false,
+      "fontEmphasisItalic" : false,
+      "fontEmphasisUnderline" : false,
+      "foregroundColor" : "#296aac",
+      "image" : "",
+      "lineColor" : "#4395e7",
+      "lineStyle" : "solid",
+      "lineThickness" : 1,
+      "secondaryBackgroundColor" : "",
+      "textSize" : "normal"
+    },
+    "description" : "",
+    "displayString" : "",
+    "name" : ""
+  } ],
+  "stateType" : "string"
+}]]></content>
+    </StateDefinition>
+  </StateDefinitions>
 </Entities>

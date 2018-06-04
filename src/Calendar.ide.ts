@@ -110,11 +110,7 @@ class CalendarWidget extends TWComposerWidget {
     };
 
     widgetServices(): Dictionary<TWWidgetService> {
-        return {
-            "TestService": {
-                
-            }
-        };
+        return {};
     };
 
     widgetEvents(): Dictionary<TWWidgetEvent> {
