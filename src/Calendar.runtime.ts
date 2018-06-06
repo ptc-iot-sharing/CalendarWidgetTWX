@@ -72,6 +72,12 @@ class CalendarWidget extends TWRuntimeWidget {
         }
     }
 
+    @TWProperty('WeekSlotDuration')
+    weekSlotDuration: string;
+
+    @TWProperty('ShowAllDaySlot')
+    showAllDaySlot: boolean;
+
     selectedIndices: number[] = [];
 
     serviceInvoked(name: string): void {
@@ -165,6 +171,8 @@ class CalendarWidget extends TWRuntimeWidget {
             eventStartEditable: this.getProperty('Editable', false),
             events: this.events,
             snapDuration: this.dragInterval || '00:01:00',
+            slotDuration: this.weekSlotDuration || '00:30:00',
+            allDaySlot: this.showAllDaySlot === undefined ? true : this.showAllDaySlot,
             defaultView: this.view.indexOf(',') == -1 ? this.view : 'agendaWeek',
             locale: this.locale,
             eventClick: (calendarEvent: EventObjectInput, event: MouseEvent, view: any) => {

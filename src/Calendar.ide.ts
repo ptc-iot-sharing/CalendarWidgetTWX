@@ -104,6 +104,16 @@ class CalendarWidget extends TWComposerWidget {
                         {text: 'Day', value: 'agendaDay'},
                         {text: 'List', value: 'listWeek'},
                     ]
+                },
+                WeekSlotDuration: {
+                    description: 'Controls how much time each week view row should take.',
+                    baseType: 'STRING',
+                    defaultValue: '00:30:00'
+                },
+                ShowAllDaySlot: {
+                    description: 'Controls whether the all day slot will be visible.',
+                    baseType: 'BOOLEAN',
+                    defaultValue: true
                 }
             }
         };
