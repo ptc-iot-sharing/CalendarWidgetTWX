@@ -1,3 +1,9 @@
+.CalendarWidgetMini {
+    --selection-border-radius: 0px;
+    --today-size: 0px;
+    --today-border-radius: 0px;
+}
+
 .fc-day-header {
     border: none !important;
 }
@@ -12,12 +18,33 @@
     color: rgba(0, 0, 0, .66) !important;
 }
 
+.CalendarWidgetMini .fc-day, .CalendarWidgetMini .fc-day-top {
+    border-width: 0px;
+}
+
+.CalendarWidgetMini .fc-highlight-skeleton > table {
+    border-collapse: separate;
+}
+
+.CalendarWidgetMini .fc-head-container.fc-widget-header {
+    font-size: 12px !important;
+}
+
 .fc-center {
     font-size: 20px !important;
     font-weight: 600 !important;
 
     padding-top: 8px !important;
     padding-bottom: 8px !important;
+}
+
+.CalendarWidgetMini .fc-left > * {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    padding-left: 8px !important;
 }
 
 .fc-day-header.fc-widget-header{
@@ -33,6 +60,12 @@
     padding-right: 8px !important;
 }
 
+.CalendarWidgetMini .fc-button {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
 .fc-minor > .fc-widget-content {
     border-top-style: solid !important;
     border-color: transparent !important;
@@ -40,6 +73,75 @@
 
 td.fc-widget-content {
     border-color: rgba(0, 0, 0, .05) !important;
+}
+
+.CalendarWidgetMini td.fc-widget-content {
+    border-color: transparent !important;
+}
+
+.CalendarWidgetMini .fc-day-grid {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.CalendarWidgetMini .fc-day-grid > div {
+    flex-grow: 1;
+    min-height: 0px !important;
+}
+
+.CalendarWidgetMini .fc-content-skeleton {
+    bottom: 0;
+}
+
+.CalendarWidgetMini .fc-content-skeleton > table::after {
+    display: none !important;
+}
+
+.CalendarWidgetMini .fc-content-skeleton > table, .CalendarWidgetMini .fc-content-skeleton > table > thead, .CalendarWidgetMini .fc-content-skeleton > table > thead > tr, .CalendarWidgetMini .fc-content-skeleton > table > thead > tr > td {
+    height: 100% !important;
+}
+
+.CalendarWidgetMini .fc-content-skeleton > table > thead {
+    display: block;
+}
+
+.CalendarWidgetMini .fc-content-skeleton > table > thead > tr {
+    display: flex;
+    width: 100%;
+}
+
+.CalendarWidgetMini .fc-content-skeleton > table > thead > tr > td {
+    text-align: center;
+    vertical-align: middle;
+    flex-grow: 1;
+    flex-basis: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.CalendarWidgetMini .fc-content-skeleton > table > thead > tr > td > a {
+    float: none !important;
+    pointer-events: none;
+
+    font-weight: 500;
+    display: none;
+}
+
+.CalendarWidgetMiniDate {
+    float: none !important;
+    pointer-events: none;
+
+    font-weight: 500;
+}
+
+.CalendarWidgetMini .fc-content-skeleton > table > thead > tr > td > a.fc-week-number {
+    display: none;
+}
+
+.CalendarWidgetMini .fc-day-number {
+    padding: 0 !important;
 }
 
 .fc-axis.fc-time.fc-widget-content {
@@ -104,4 +206,89 @@ td.fc-today {
 
 .fc-list-item {
     cursor: pointer;
+}
+
+.CalendarWidgetMini .fc-highlight {
+    border-radius: var(--selection-border-radius);
+    background-color: #E75251;
+    opacity: 1;
+
+    position: relative;
+}
+
+.CalendarWidgetMini .fc-highlight[colspan="1"] {
+    background-color: transparent;
+}
+
+.CalendarWidgetMini .fc-highlight[colspan="1"]::after {
+    border-radius: var(--today-border-radius);
+    background-color: #E75251;
+
+    width: var(--today-size);
+    height: var(--today-size);
+
+    content: '';
+    
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    margin-left: calc(0px - var(--today-border-radius));
+    margin-top: calc(0px - var(--today-border-radius));
+}
+
+.CalendarWidgetMini .CalendarDateSelected {
+    color: white;
+}
+
+.CalendarWidgetMini .fc-content-skeleton .fc-today {
+    background-color: transparent !important;
+}
+
+.CalendarWidgetMini .fc-bg {
+    z-index: 4 !important;
+}
+
+.CalendarWidgetMini .fc-bg .fc-day {
+    background-color: transparent !important;
+
+    vertical-align: middle;
+    text-align: center;
+    line-height: 100%;
+
+    font-weight: 500;
+    font-size: 14px;
+
+    position: relative;
+}
+
+.CalendarWidgetMini .fc-bg .fc-other-month {
+    color: rgba(0, 0, 0, .5);
+}
+
+.CalendarWidgetMini .CalendarWidgetMiniDate {
+    position: relative;
+}
+
+.CalendarWidgetMini .fc-bg .CalendarWidgetMiniDateSelected {
+    color: white !important;
+}
+
+.CalendarWidgetMini .fc-bg .fc-today::before {
+    border-radius: var(--today-border-radius);
+    background-color: #adf0df;
+
+    width: var(--today-size);
+    height: var(--today-size);
+
+    content: '';
+    
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    margin-left: calc(0px - var(--today-border-radius));
+    margin-top: calc(0px - var(--today-border-radius));
 }

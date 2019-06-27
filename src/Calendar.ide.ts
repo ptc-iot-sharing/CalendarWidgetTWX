@@ -114,6 +114,48 @@ class CalendarWidget extends TWComposerWidget {
                     description: 'Controls whether the all day slot will be visible.',
                     baseType: 'BOOLEAN',
                     defaultValue: true
+                },
+                ViewStartDate: {
+                    description: 'Represents the start date that is currently visible on screen. For month view, this will represent the first day of the month.',
+                    baseType: 'DATETIME',
+                    isEditable: false,
+                    isBindingSource: true
+                },
+                ViewEndDate: {
+                    description: 'Represents the end date that is currently visible on screen. For month view, this will represent the last day of the month.',
+                    baseType: 'DATETIME',
+                    isEditable: false,
+                    isBindingSource: true
+                },
+                DragToSelect: {
+                    description: 'When enabled, the user can drag on dates to select them.',
+                    baseType: 'BOOLEAN',
+                    defaultValue: false
+                },
+                ClickToSelect: {
+                    description: 'When enabled, the user can click an interval to select it. The first click will select the starting date and the second one will select the end date.',
+                    baseType: 'BOOLEAN',
+                    defaultValue: false
+                },
+                ClickedDate: {
+                    description: 'When the user clicks on a date, this represents the clicked date.',
+                    baseType: 'DATETIME',
+                    isEditable: false,
+                    isBindingSource: true
+                },
+                SelectionStart: {
+                    description: 'When selection is enabled, this represents the start of the selected interval.',
+                    baseType: 'DATETIME',
+                    isEditable: false,
+                    isBindingSource: true,
+                    isBindingTarget: true
+                },
+                SelectionEnd: {
+                    description: 'When selection is enabled, this represents the end of the selected interval.',
+                    baseType: 'DATETIME',
+                    isEditable: false,
+                    isBindingSource: true,
+                    isBindingTarget: true
                 }
             }
         };
@@ -125,7 +167,9 @@ class CalendarWidget extends TWComposerWidget {
 
     widgetEvents(): Dictionary<TWWidgetEvent> {
         return {
-            CalendarDidModifyEvents: {}
+            CalendarDidModifyEvents: {},
+            ViewDidChange: {},
+            UserDidClickDate: {description: 'Invoked whenever the user clicks on a date. The ClickedDate property will hold the clicked date value.'}
         };
     }
 

@@ -1,6 +1,6 @@
 {
     "name": "Calendar",
-    "version": "1.2.0",
+    "version": "1.5.2",
     "description": "Calendar widget",
     "thingworxServer": "http://localhost",
     "thingworxUser": "Administrator",
