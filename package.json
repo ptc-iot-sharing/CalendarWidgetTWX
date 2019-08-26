@@ -1,19 +1,19 @@
 {
     "name": "Calendar",
-    "version": "1.5.2",
+    "version": "1.5.5",
     "description": "Calendar widget",
     "thingworxServer": "http://localhost",
     "thingworxUser": "Administrator",
     "thingworxPassword": "admin",
     "author": "Thingworx RoIcenter",
     "minimumThingWorxVersion": "6.0.0",
-    "homepage": "http://roicentersvn/BogdanMihaiciuc/Calendar",
+    "homepage": "https://github.com/ptc-iot-sharing/CalendarWidgetTWX",
     "autoUpdate": {
-        "giteaURL": "http://roicentersvn/api/v1/repos/BogdanMihaiciuc/Calendar/releases/latest"
+        "giteaURL": "https://api.github.com/repos/ptc-iot-sharing/CalendarWidgetTWX/releases/latest"
     },
     "repository": {
         "type": "git",
-        "url": "http://roicentersvn.ptcnet.ptc.com/BogdanMihaiciuc/Calendar.git"
+        "url": "https://github.com/ptc-iot-sharing/CalendarWidgetTWX.git"
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",

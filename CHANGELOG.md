@@ -1,4 +1,4 @@
-# 1.3
+# 1.5.5
 
 When the calendar has less than 500 pixels in any dimension it will now switch to a mini month view.
 

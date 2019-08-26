@@ -162,14 +162,17 @@ class CalendarWidget extends TWComposerWidget {
     };
 
     widgetServices(): Dictionary<TWWidgetService> {
-        return {};
+        return {
+            ClearSelection: {description: 'Can be invoked to clear the current selection.'}
+        };
     };
 
     widgetEvents(): Dictionary<TWWidgetEvent> {
         return {
             CalendarDidModifyEvents: {},
             ViewDidChange: {},
-            UserDidClickDate: {description: 'Invoked whenever the user clicks on a date. The ClickedDate property will hold the clicked date value.'}
+            UserDidClickDate: {description: 'Triggered whenever the user clicks on a date. The ClickedDate property will hold the clicked date value.'},
+            SelectionDidChange: {description: 'Triggered whenever the selection changes.'}
         };
     }
 
@@ -178,7 +181,6 @@ class CalendarWidget extends TWComposerWidget {
     };
 
     afterRender(): void {
-        this.jqElement.parent().addClass('CalendarBoundingBox');
 
         let IDEConfiguration: OptionsInput = {
             events: [
@@ -235,9 +237,17 @@ class CalendarWidget extends TWComposerWidget {
               ]
         };
 
-        let calendar = this.jqElement.fullCalendar($.extend({}, BaseCalendarConfiguration, IDEConfiguration));
+        const versionComponents: number[] = TW.version.split('.').map(n => parseInt(n));
 
-        this.calendar = this.jqElement.fullCalendar('getCalendar');
+        if (versionComponents[0] < 8 || (versionComponents[0] == 8 && versionComponents[1] < 4)) {
+            this.jqElement.parent().addClass('CalendarBoundingBox');
+            let calendar = this.jqElement.fullCalendar($.extend({}, BaseCalendarConfiguration, IDEConfiguration));
+    
+            this.calendar = this.jqElement.fullCalendar('getCalendar');
+        }
+        else {
+            this.jqElement[0].innerText = 'Preview not available on 8.4.'
+        }
     }
 
     resize() {

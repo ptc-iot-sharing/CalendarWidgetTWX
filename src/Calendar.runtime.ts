@@ -233,6 +233,16 @@ class CalendarWidget extends TWRuntimeWidget {
      */
     private _isMiniCalendar: boolean = false;
 
+    @TWService('ClearSelection')
+    clearSelection() {
+        this.calendar.select(0, 0);
+
+        this.selectionStart = undefined;
+        this.selectionEnd = undefined;
+
+        this.jqElement.triggerHandler('SelectionDidChange');
+    }
+
     async afterRender(): Promise<void> {
         this.boundingBox.addClass('CalendarBoundingBox');
         
@@ -379,6 +389,8 @@ class CalendarWidget extends TWRuntimeWidget {
 
                 this.selectionStart = start.toDate();
                 this.selectionEnd = endDate;
+
+                this.jqElement.triggerHandler('SelectionDidChange');
             }
         };
 
