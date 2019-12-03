@@ -60,6 +60,10 @@
     padding-right: 8px !important;
 }
 
+.CalendarWidgetNoHeader .fc-header-toolbar {
+    display: none;
+}
+
 .CalendarWidgetMini .fc-button {
     background: none !important;
     border: none !important;
@@ -136,6 +140,11 @@ td.fc-widget-content {
     font-weight: 500;
 }
 
+.fc-title:not(.CalendarWidgetDescription) {
+    font-size: 16px;
+    font-weight: 500;
+}
+
 .CalendarWidgetMini .fc-content-skeleton > table > thead > tr > td > a.fc-week-number {
     display: none;
 }
@@ -181,7 +190,7 @@ td.fc-today {
 }
 
 .CalendarEvent {
-    box-shadow: 0px 6px 20px rgba(0, 0, 0, .1), 0px 2px 6px rgba(0, 0, 0, .1), 0px 0px 0px 1px rgba(0, 0, 0, .2);
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, .1), 0px 2px 6px rgba(0, 0, 0, .1), 0px 0px 0px 1px rgba(0, 0, 0, .2) !important;
     border: none !important;
     padding: 8px;
     box-sizing: border-box;
@@ -191,9 +200,19 @@ td.fc-today {
     background-color: rgba(31, 139, 255, 0.39) !important;
     color: rgb(41, 106, 172) !important;
     border-left: 2px solid rgb(67, 149, 231) !important;
+}
+
+.CalendarEvent::before {
+    content: '';
 
     -webkit-backdrop-filter: blur(15px);
     backdrop-filter: blur(15px);
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 .CalendarEvent .fc-time {

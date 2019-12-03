@@ -108,10 +108,6 @@ module.exports = function (env, argv) {
                 }
             ]
         },
-
-        externals: {
-            jquery: 'jQuery'
-        }
     }
     // if we are in production, disable the minimizer
     if (isProduction) {

@@ -1,9 +1,7 @@
 // automatically import the css file
 import { ThingworxComposerWidget } from './support/widgetRuntimeSupport'
-import 'fullcalendar'
-import Calendar from 'fullcalendar/Calendar'
+import { Calendar, OptionsInput } from '@fullcalendar/core'
 import { BaseCalendarConfiguration } from './internalLogic/defaultConfiguration';
-import { OptionsInput } from 'fullcalendar';
 
 @ThingworxComposerWidget
 class CalendarWidget extends TWComposerWidget {
@@ -16,7 +14,6 @@ class CalendarWidget extends TWComposerWidget {
 
     widgetProperties(): TWWidgetProperties {
         require("./styles/common.css");
-        require('../node_modules/fullcalendar/dist/fullcalendar.css')
         return {
             name: 'Calendar',
             description: 'A calendar.',
@@ -50,6 +47,11 @@ class CalendarWidget extends TWComposerWidget {
                 },
                 EventNameField: {
                     description: 'The field representing event names.',
+                    baseType: 'FIELDNAME',
+                    sourcePropertyName: 'Data'
+                },
+                EventDescriptionField: {
+                    description: 'If specified, this represents the event description which appears below the name.',
                     baseType: 'FIELDNAME',
                     sourcePropertyName: 'Data'
                 },
@@ -95,15 +97,20 @@ class CalendarWidget extends TWComposerWidget {
                 },
                 Views: {
                     description: 'Controls the available views.',
-                    defaultValue: 'month,agendaWeek,agendaDay,listWeek',
+                    defaultValue: 'dayGridMonth,timeGridWeek,timeGridDay,dayGridWeek',
                     baseType: 'STRING',
                     selectOptions: [
-                        {text: 'Select', value: 'month,agendaWeek,agendaDay,listWeek'},
-                        {text: 'Month', value: 'month'},
-                        {text: 'Week', value: 'agendaWeek'},
-                        {text: 'Day', value: 'agendaDay'},
-                        {text: 'List', value: 'listWeek'},
+                        {text: 'Select', value: 'dayGridMonth,timeGridWeek,timeGridDay,dayGridWeek'},
+                        {text: 'Month', value: 'dayGridMonth'},
+                        {text: 'Week', value: 'timeGridWeek'},
+                        {text: 'Day', value: 'timeGridDay'},
+                        {text: 'List', value: 'dayGridWeek'},
                     ]
+                },
+                ShowHeader: {
+                    description: 'If enabled, the header will be displayed.',
+                    defaultValue: true,
+                    baseType: 'BOOLEAN'
                 },
                 WeekSlotDuration: {
                     description: 'Controls how much time each week view row should take.',
@@ -132,10 +139,32 @@ class CalendarWidget extends TWComposerWidget {
                     baseType: 'BOOLEAN',
                     defaultValue: false
                 },
+                DragToCreateEvent: {
+                    description: 'When enabled together with "DragToSelect", creating a selection will create an event in that slot.',
+                    baseType: 'BOOLEAN',
+                    defaultValue: false
+                },
                 ClickToSelect: {
                     description: 'When enabled, the user can click an interval to select it. The first click will select the starting date and the second one will select the end date.',
                     baseType: 'BOOLEAN',
                     defaultValue: false
+                },
+                DoubleClickToCreateEvent: {
+                    description: 'When enabled, double clicking an empty slot will create an event.',
+                    baseType: 'BOOLEAN',
+                    defaultValue: false,
+                    isVisible: false
+                },
+                NewEventName: {
+                    description: 'When a new event is created, this represents the default name that is assigned to that event.',
+                    baseType: 'STRING',
+                    defaultValue: 'New Event'
+                },
+                NewEventProperties: {
+                    description: 'If specified, when a new event is created, this represents additional properties to assign to that event. This is a JSON object.',
+                    baseType: 'STRING',
+                    defaultValue: '{}',
+                    isBindingSource: true
                 },
                 ClickedDate: {
                     description: 'When the user clicks on a date, this represents the clicked date.',
@@ -156,6 +185,11 @@ class CalendarWidget extends TWComposerWidget {
                     isEditable: false,
                     isBindingSource: true,
                     isBindingTarget: true
+                },
+                MiniCalendar: {
+                    description: 'If enabled, the calendar will become a mini calendar when it is shrinked beyond a certain size.',
+                    defaultValue: false,
+                    baseType: 'BOOLEAN'
                 }
             }
         };
@@ -169,10 +203,11 @@ class CalendarWidget extends TWComposerWidget {
 
     widgetEvents(): Dictionary<TWWidgetEvent> {
         return {
-            CalendarDidModifyEvents: {},
-            ViewDidChange: {},
+            CalendarDidModifyEvents: {description: 'Triggered whenever an event is moved or resized.'},
+            ViewDidChange: {description: 'Triggered whenever the view changes.'},
             UserDidClickDate: {description: 'Triggered whenever the user clicks on a date. The ClickedDate property will hold the clicked date value.'},
-            SelectionDidChange: {description: 'Triggered whenever the selection changes.'}
+            SelectionDidChange: {description: 'Triggered whenever the selection changes.'},
+            CalendarDidCreateEvent: {description: 'Triggered whenever the calendar creates an event. This is triggered after the event is created but before it has been rendered.'}
         };
     }
 
@@ -239,14 +274,12 @@ class CalendarWidget extends TWComposerWidget {
 
         const versionComponents: number[] = TW.version.split('.').map(n => parseInt(n));
 
+        // TBD
         if (versionComponents[0] < 8 || (versionComponents[0] == 8 && versionComponents[1] < 4)) {
-            this.jqElement.parent().addClass('CalendarBoundingBox');
-            let calendar = this.jqElement.fullCalendar($.extend({}, BaseCalendarConfiguration, IDEConfiguration));
-    
-            this.calendar = this.jqElement.fullCalendar('getCalendar');
+            this.jqElement[0].innerText = 'Preview is currently unavailable.'
         }
         else {
-            this.jqElement[0].innerText = 'Preview not available on 8.4.'
+            this.jqElement[0].innerText = 'Preview is currently unavailable.'
         }
     }
 

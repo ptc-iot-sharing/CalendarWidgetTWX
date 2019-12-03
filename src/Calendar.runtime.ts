@@ -1,10 +1,11 @@
 import { ThingworxRuntimeWidget, TWService, TWProperty } from './support/widgetRuntimeSupport'
-import 'fullcalendar'
-import '../node_modules/fullcalendar/dist/locale-all'
-import Calendar from 'fullcalendar/Calendar'
-import { OptionsInput, EventObjectInput, View } from 'fullcalendar';
-import { BaseCalendarConfiguration } from './internalLogic/defaultConfiguration';
-import { Moment, Duration } from 'moment';
+import '@fullcalendar/core/locales-all'
+import { Calendar, OptionsInput, EventApi, EventInput, Duration, View } from '@fullcalendar/core'
+import { EventSourceError } from '@fullcalendar/core/structs/event-source'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import { BaseCalendarConfiguration } from './internalLogic/defaultConfiguration'
 
 declare global {
     interface NodeList {
@@ -13,6 +14,22 @@ declare global {
     interface HTMLCollection {
         [Symbol.iterator]: () => Iterator<Element>;
     }
+}
+
+/**
+ * Returns a copy of the given infotable.
+ * @param table The infotable to copy.
+ * @return      An infotable.
+ */
+function _copyInfotable(table: TWInfotable): TWInfotable {
+    return {dataShape: table.dataShape, rows: table.rows.map(row => {
+        const newRow = {};
+        for (const key in row) {
+            newRow[key] = row[key];
+        }
+
+        return newRow;
+    })};
 }
 
 @ThingworxRuntimeWidget
@@ -29,15 +46,20 @@ class CalendarWidget extends TWRuntimeWidget {
     set editable(editable: any) {
         let editableBool = eval(editable);
 
-        this.calendar.option('editable', editableBool);
-        this.calendar.option('eventDurationEditable', editableBool);
-        this.calendar.option('eventStartEditable', editableBool);
+        this.calendar.setOption('editable', editableBool);
+        this.calendar.setOption('eventDurationEditable', editableBool);
+        this.calendar.setOption('eventStartEditable', editableBool);
     }
 
     /**
      * The infotable field representing the name.
      */
     @TWProperty('EventNameField') nameField: string;
+
+    /**
+     * The infotable field representing the name.
+     */
+    @TWProperty('EventDescriptionField') descriptionField: string;
 
     /**
      * The infotable field representing the start date.
@@ -58,6 +80,11 @@ class CalendarWidget extends TWRuntimeWidget {
      * Controls what views are available.
      */
     @TWProperty('Views') view: string;
+
+    /**
+     * Controls whether the header is visible.
+     */
+    @TWProperty('ShowHeader') showHeader: boolean;
 
     /**
      * Represents the last clicked date.
@@ -86,7 +113,10 @@ class CalendarWidget extends TWRuntimeWidget {
 
         if (data) {
             this._visibleData.dataShape.fieldDefinitions = JSON.parse(JSON.stringify(data.dataShape.fieldDefinitions));
+            // Create a copy of the data for use
+            this.setProperty('Data', _copyInfotable(data));
         }
+
 
         this.calendar.refetchEvents();
     }
@@ -104,7 +134,7 @@ class CalendarWidget extends TWRuntimeWidget {
     @TWProperty('Locale')
     set locale(locale: string) {
         if (this.calendar) {
-            this.calendar.option('locale', locale);
+            this.calendar.setOption('locale', locale);
         }
     }
 
@@ -124,9 +154,22 @@ class CalendarWidget extends TWRuntimeWidget {
     @TWProperty('DragToSelect') dragToSelect: boolean; 
 
     /**
+     * Controls whether dragging to select creates an event.
+     */
+    @TWProperty('DragToCreateEvent') dragToCreateEvent: boolean;
+
+    /**
      * Controls whether click to select is enabled.
      */
     @TWProperty('ClickToSelect') clickToSelect: boolean;
+
+    /**
+     * Controls whether double clicking creates an event.
+     */
+    @TWProperty('DoubleClickToCreateEvent') doubleClickToCreateEvent: boolean;
+
+    @TWProperty('NewEventName') newEventName: string;
+    @TWProperty('NewEventProperties') newEventProperties: string;
 
     /**
      * Represents the start date of the currently selected range.
@@ -138,6 +181,8 @@ class CalendarWidget extends TWRuntimeWidget {
      */
     @TWProperty('SelectionEnd') selectionEnd: Date;
 
+    @TWProperty('MiniCalendar') miniCalendar: boolean;
+
     selectedIndices: number[] = [];
 
     serviceInvoked(name: string): void {
@@ -146,17 +191,19 @@ class CalendarWidget extends TWRuntimeWidget {
 
     renderHtml(): string {
         require("./styles/common.css");
-        require('../node_modules/fullcalendar/dist/fullcalendar.css')
+        require('@fullcalendar/core/main.css');
+        require('@fullcalendar/daygrid/main.css');
+        require('@fullcalendar/timegrid/main.css');
         return '<div class="widget-content CalendarWidget"></div>';
     }
-
-    events: ((start: Moment, end: Moment, timezone: any, callback: (events: EventObjectInput[]) => void) => void) = (start, end, timezone, callback) => {
-        if (!this.data) return;
+    
+    events: (({start, end, timezone}: {start: Date, end: Date, timezone: any}, callback: (events: EventInput[]) => void, error: (err: EventSourceError) => void) => void) = ({start, end, timezone}, callback, error) => {
+        if (!this.data) return callback([]);
 
         let startTimestamp = +start;
         let endTimestamp = +end;
 
-        let events: EventObjectInput[] = [];
+        let events: EventInput[] = [];
 
         this._visibleData.rows = [];
 
@@ -171,7 +218,7 @@ class CalendarWidget extends TWRuntimeWidget {
                             title: row[this.nameField],
                             id: this.IDField ? row[this.IDField] : undefined,
                             start: row[this.startDateField],
-                            dataIndex: i,
+                            extendedProps: {dataIndex: i},
                             className: this.eventClass,
                             allDay: true
                         })
@@ -192,7 +239,7 @@ class CalendarWidget extends TWRuntimeWidget {
                             id: this.IDField ? row[this.IDField] : undefined,
                             start: row[this.startDateField],
                             end: row[this.endDateField],
-                            dataIndex: i,
+                            extendedProps: {dataIndex: i},
                             className: this.eventClass
                         })
                     }
@@ -205,7 +252,7 @@ class CalendarWidget extends TWRuntimeWidget {
                         title: row[this.nameField],
                         id: this.IDField ? row[this.IDField] : undefined,
                         start: row[this.startDateField],
-                        dataIndex: i,
+                        extendedProps: {dataIndex: i},
                         className: this.eventClass,
                         allDay: true
                     })
@@ -216,6 +263,11 @@ class CalendarWidget extends TWRuntimeWidget {
         this.visibleData = this._visibleData;
         callback(events);
     };
+
+    /**
+     * The last modified event.
+     */
+    modifiedEvent?: EventApi;
 
     /**
      * Set to `true` while awaiting for the second click to trigger an interval selection.
@@ -245,8 +297,36 @@ class CalendarWidget extends TWRuntimeWidget {
 
     async afterRender(): Promise<void> {
         this.boundingBox.addClass('CalendarBoundingBox');
+
+        let doubleClickTimeout;
+
+        // Tracks whether the mouse moves during selection
+        let mouseDidMove = false;
+        // Represents the mouseup event that triggers a selection
+        let mouseupSelectionEvent;
+
+        this.jqElement[0].addEventListener('mousedown', event => {
+            mouseupSelectionEvent = undefined;
+            mouseDidMove = undefined;
+
+            const mousemoveListener = event => {
+                mouseDidMove = true;
+            }
+
+            const mouseupListener = event => {
+                mouseupSelectionEvent = event;
+                
+                window.removeEventListener('mousemove', mousemoveListener, true);
+                window.removeEventListener('mouseup', mouseupListener, true);
+            }
+
+            window.addEventListener('mousemove', mousemoveListener, true);
+            window.addEventListener('mouseup', mouseupListener, true);
+        });
         
         let runtimeConfiguration: OptionsInput = {
+            plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+            timeZone: 'UTC',
             header: {
                 left: 'prev,next today',
                 center: 'title',
@@ -259,14 +339,15 @@ class CalendarWidget extends TWRuntimeWidget {
             snapDuration: this.dragInterval || '00:01:00',
             slotDuration: this.weekSlotDuration || '00:30:00',
             allDaySlot: this.showAllDaySlot === undefined ? true : this.showAllDaySlot,
-            defaultView: this.view.indexOf(',') == -1 ? this.view : 'agendaWeek',
+            defaultView: this.view.indexOf(',') == -1 ? this.view : 'timeGridWeek',
             locale: this.locale,
             height: this.jqElement[0].offsetHeight || 'auto',
             selectable: this.dragToSelect,
             unselectAuto: false,
-            eventClick: (calendarEvent: EventObjectInput, event: MouseEvent, view: any) => {
+            navLinks: true,
+            eventClick: ({el: node, event: calendarEvent, jsEvent: event, view: any}: {el: HTMLElement, event: EventApi, jsEvent: MouseEvent, view: any}) => {
                 if (event.ctrlKey || event.metaKey) {
-                    let index = this.selectedIndices.indexOf(calendarEvent.dataIndex);
+                    let index = this.selectedIndices.indexOf(calendarEvent.extendedProps.dataIndex);
 
                     if (index != -1) {
                         this.selectedIndices.splice(index, 1);
@@ -274,24 +355,36 @@ class CalendarWidget extends TWRuntimeWidget {
                         this.calendar.refetchEvents();
                     }
                     else {
-                        this.selectedIndices.push(calendarEvent.dataIndex);
+                        this.selectedIndices.push(calendarEvent.extendedProps.dataIndex);
                         this.updateSelection('Data', this.selectedIndices);
                         this.calendar.refetchEvents();
                     }
                 }
                 else {
                     // Select the event
-                    this.updateSelection('Data', [calendarEvent.dataIndex]);
-                    this.selectedIndices = [calendarEvent.dataIndex];
+                    this.updateSelection('Data', [calendarEvent.extendedProps.dataIndex]);
+                    this.selectedIndices = [calendarEvent.extendedProps.dataIndex];
                     this.calendar.refetchEvents();
                 }
             },
-            eventRender: (event: EventObjectInput, element: JQuery<HTMLElement>, view: any) => {
+            eventRender: ({isMirror, isStart, isEnd, event, el: element, view}: {isMirror: boolean, isStart: boolean, isEnd: boolean, event: EventApi, el: HTMLElement, view: any}) => {
+                // Set the description, if it exists
+                if (this.descriptionField) {
+                    const descriptionText = this.data.rows[event.extendedProps.dataIndex][this.descriptionField];
+                    if (descriptionText) {
+                        const description = document.createElement('div');
+                        description.className = 'fc-title CalendarWidgetDescription';
+                        description.style.opacity = '.66';
+                        description.innerText = descriptionText;
+                        element.children[0].appendChild(description);
+                    }
+                }
+
                 // Apply the per-event state formatting
                 if (!this.states) return;
 
-                let dataRow = this.data.rows[event.dataIndex];
-                let isSelected = this.selectedIndices.indexOf(event.dataIndex) != -1;
+                let dataRow = this.data.rows[event.extendedProps.dataIndex];
+                let isSelected = this.selectedIndices.indexOf(event.extendedProps.dataIndex) != -1;
 
                 let stateFormat = TW.getStyleFromStateFormatting({ DataRow: dataRow, StateFormatting: this.states });
                 
@@ -323,38 +416,40 @@ class CalendarWidget extends TWRuntimeWidget {
                     attributes += `color: transparent !important; `;
                 }
 
-                element[0].setAttribute('style', (element[0].getAttribute('style') || '') + attributes);
+                element.setAttribute('style', (element.getAttribute('style') || '') + attributes);
             },
-            eventDrop: (event: EventObjectInput, delta: Duration, revertFunc: () => void, jsEvent: Event, ui?: JQuery<HTMLElement>, view?: any) => {
-                let dataRow = this.data.rows[event.dataIndex];
+            eventDrop: ({event, delta, oldEvent, revert, jsEvent, el: node, view}: {event: EventApi, oldEvent: EventApi, delta: Duration, revert: () => void, jsEvent: Event, el: HTMLElement, view?: any}) => {
+                let dataRow = this.data.rows[event.extendedProps.dataIndex];
 
-                if ((event.start as Moment).hasTime() && (event.end as Moment).hasTime()) {
-                    dataRow[this.startDateField] = (event.start as Moment).local(true).toDate();
-                    dataRow[this.endDateField] = (event.end as Moment).local(true).toDate();
+                if (!event.allDay) {
+                    dataRow[this.startDateField] = event.start;
+                    dataRow[this.endDateField] = event.end;
                 }
                 else {
-                    dataRow[this.startDateField] = (event.start as Moment).local(true).toDate();
+                    dataRow[this.startDateField] = event.start;
                     dataRow[this.endDateField] = undefined;
                 }
 
                 this.data = this.data;
                 this.visibleData = this.visibleData;
 
+                this.modifiedEvent = event;
                 this.jqElement.triggerHandler('CalendarDidModifyEvents');
             },
-            eventResize: (event: EventObjectInput, delta: Duration, revertFunc: () => void, jsEvent: Event, ui?: JQuery<HTMLElement>, view?: any) => {
-                let dataRow = this.data.rows[event.dataIndex];
+            eventResize: ({event, startDelta, endDelta, revert, jsEvent, el, view, prevEvent}: {event: EventApi, prevEvent: EventApi, startDelta: Duration, endDelta: Duration, revert: () => void, jsEvent: Event, el: HTMLElement, view?: any}) => {
+                let dataRow = this.data.rows[event.extendedProps.dataIndex];
 
-                dataRow[this.startDateField] = (event.start as Moment).local(true).toDate();
-                dataRow[this.endDateField] = (event.end as Moment).local(true).toDate();
+                dataRow[this.startDateField] = event.start;
+                dataRow[this.endDateField] = event.end;
 
                 this.data = this.data;
                 this.visibleData = this.visibleData;
 
+                this.modifiedEvent = event;
                 this.jqElement.triggerHandler('CalendarDidModifyEvents');
             },
-            dayClick: async (date: Moment, jsEvent: MouseEvent, view: View, resourceObj?: any) => {
-                this.clickedDate = date.toDate();
+            navLinkDayClick: async (date: Date, jsEvent: MouseEvent) => {
+                this.clickedDate = date;
                 this.jqElement.trigger('UserDidClickDate');
 
                 if (this.clickToSelect) {
@@ -367,43 +462,90 @@ class CalendarWidget extends TWRuntimeWidget {
                     }
                     else {
                         this._selectionStarted = true;
-                        this._selectionStartDate = date.toDate();
+                        this._selectionStartDate = date;
                     }
                 }
             },
-            viewRender: (view: View, el: JQuery) => {
-                this.setProperty('ViewStartDate', +view.intervalStart);
-                this.setProperty('ViewEndDate', +view.intervalEnd);
+            datesRender: ({view, el}: {view: View, el: HTMLElement}) => {
+                this.setProperty('ViewStartDate', +view.currentStart);
+                this.setProperty('ViewEndDate', +view.currentEnd);
                 this.jqElement.triggerHandler('ViewDidChange');
             },
-            dayRender: (date: Moment, cell: JQuery<HTMLTableDataCellElement>) => {
-                const td = cell[0];
+            dayRender: ({el: cell, date}: {date: Date, el: HTMLTableDataCellElement, view: View}) => {
+                const td = cell;
 
                 if (this._isMiniCalendar) {
-                    td.innerHTML = `<span class="CalendarWidgetMiniDate">${date.date().toFixed()}</span>`;
+                    td.innerHTML = `<span class="CalendarWidgetMiniDate">${date.getDate().toFixed()}</span>`;
                 }
             },
-            select: (start: Moment, end: Moment) => {
-                const endDate = end.toDate();
-                endDate.setDate(endDate.getDate() - 1);
-
-                this.selectionStart = start.toDate();
-                this.selectionEnd = endDate;
+            select: ({start, end, jsEvent}: {start: Date, end: Date, jsEvent: MouseEvent}) => {
+                this.selectionStart = start;
+                this.selectionEnd = end;
 
                 this.jqElement.triggerHandler('SelectionDidChange');
+
+                let createEvent = false;
+
+                if (!this.data) return;
+
+                if (this.dragToCreateEvent && mouseDidMove && mouseupSelectionEvent == jsEvent) {
+                    createEvent = true;
+                }
+
+                if (this.doubleClickToCreateEvent) {
+                    if (doubleClickTimeout) {
+                        createEvent = true;
+                        doubleClickTimeout = undefined;
+                    }
+                    else {
+                        doubleClickTimeout = window.setTimeout(() => {
+                            doubleClickTimeout = undefined;
+                        }, 100);
+                    }
+                }
+
+                if (createEvent) {
+                    const event: EventInput = {};
+
+                    event[this.startDateField] = start;
+                    event[this.endDateField] = end;
+                    event[this.nameField] = this.newEventName || 'New Event';
+                    if (this.newEventProperties) {
+                        try {
+                            const properties = JSON.parse(this.newEventProperties);
+                            for (const key in properties) {
+                                event[key] = properties[key];
+                            }
+                        }
+                        catch (e) {
+                            // The only likely error is that the JSON parsing fails; in this case fail silently
+                        }
+                    }
+
+                    this.data.rows.push(event);
+                    this.setProperty('Data', this.data);
+                    this.jqElement.triggerHandler('CalendarDidCreateEvent');
+                    this.calendar.refetchEvents();
+                }
             }
         };
 
-        let calendar = this.jqElement.fullCalendar($.extend({}, BaseCalendarConfiguration, runtimeConfiguration));
+        if (!this.showHeader) {
+            this.jqElement[0].classList.add('CalendarWidgetNoHeader');
+        }
 
-        this.calendar = this.jqElement.fullCalendar('getCalendar');
+        let calendar = new Calendar(this.jqElement[0], $.extend({}, BaseCalendarConfiguration, runtimeConfiguration));
+
+        this.calendar = calendar;
 
         const width = this.jqElement[0].offsetWidth;
         const height = this.jqElement[0].offsetHeight;
 
         if (width < 500 || height < 500) {
-            this._isMiniCalendar = true;
-            this.jqElement[0].classList.add('CalendarWidgetMini');
+            if (this.miniCalendar) {
+                this._isMiniCalendar = true;
+                this.jqElement[0].classList.add('CalendarWidgetMini');
+            }
         }
         else {
             this._isMiniCalendar = false;
@@ -471,31 +613,35 @@ class CalendarWidget extends TWRuntimeWidget {
     }
 
     resize(width: number, height: number) {
-        if (width < 500 || height < 500) {
-            this.jqElement[0].classList.add('CalendarWidgetMini');
-            this.jqElement.fullCalendar('option', 'header', {
-                left: 'title',
-                center: '',
-                right: 'prev,next'
-            });
+        if (this.miniCalendar) {
+            if (width < 500 || height < 500) {
+                this.jqElement[0].classList.add('CalendarWidgetMini');
+                this.calendar.setOption('header', {
+                    left: 'title',
+                    center: '',
+                    right: 'prev,next'
+                });
+            }
+            else {
+                this.jqElement[0].classList.remove('CalendarWidgetMini');
+                this.calendar.setOption('header', {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: this.view.indexOf(',') == -1 ? '' : this.view
+                });
+            }
         }
-        else {
-            this.jqElement[0].classList.remove('CalendarWidgetMini');
-            this.jqElement.fullCalendar('option', 'header', {
-                left: 'prev,next today',
-                center: 'title',
-                right: this.view.indexOf(',') == -1 ? '' : this.view
-            });
-        }
-
-        this.jqElement.fullCalendar('option', 'height', height);
+    
+        this.calendar.setOption('height', height);
         this.calendar.render();
 
-        const cell = (<HTMLElement>this.jqElement[0].querySelector('.fc-bg .fc-day'));
-        this.jqElement[0].style.setProperty('--selection-border-radius', (cell.offsetHeight / 2) + 'px');
-        this.jqElement[0].style.setProperty('--today-border-radius', (Math.min(cell.offsetHeight, cell.offsetWidth) / 2) + 'px');
-        const today = (<HTMLElement>this.jqElement[0].querySelector('.fc-bg .fc-day:not(.fc-today)'));
-        this.jqElement[0].style.setProperty('--today-size', Math.min(today.offsetHeight, today.offsetWidth) + 'px');
+        if (this.miniCalendar) {
+            const cell = (<HTMLElement>this.jqElement[0].querySelector('.fc-bg .fc-day'));
+            this.jqElement[0].style.setProperty('--selection-border-radius', (cell.offsetHeight / 2) + 'px');
+            this.jqElement[0].style.setProperty('--today-border-radius', (Math.min(cell.offsetHeight, cell.offsetWidth) / 2) + 'px');
+            const today = (<HTMLElement>this.jqElement[0].querySelector('.fc-bg .fc-day:not(.fc-today)'));
+            this.jqElement[0].style.setProperty('--today-size', Math.min(today.offsetHeight, today.offsetWidth) + 'px');
+        }
     }
 
     updateProperty(info: TWUpdatePropertyInfo): void {

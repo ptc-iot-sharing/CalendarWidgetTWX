@@ -1,11 +1,10 @@
-import 'fullcalendar'
-import { OptionsInput } from 'fullcalendar/src/types/input-types';
+import { OptionsInput } from '@fullcalendar/core';
 
 export let BaseCalendarConfiguration: OptionsInput = {
     header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month,agendaWeek,agendaDay,listWeek'
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,dayGridWeek'
     },
     defaultDate: new Date,
     navLinks: true,
