@@ -1,5 +1,5 @@
 // automatically import the css file
-import { ThingworxComposerWidget } from './support/widgetRuntimeSupport'
+import { ThingworxComposerWidget } from 'typescriptwebpacksupport/widgetidesupport'
 import { Calendar, OptionsInput } from '@fullcalendar/core'
 import { BaseCalendarConfiguration } from './internalLogic/defaultConfiguration';
 
@@ -9,7 +9,7 @@ class CalendarWidget extends TWComposerWidget {
     calendar: Calendar;
 
     widgetIconUrl(): string {
-        return require('./images/icon.png');
+        return require('./images/icon.png').default;
     }
 
     widgetProperties(): TWWidgetProperties {

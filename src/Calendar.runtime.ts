@@ -1,4 +1,4 @@
-import { ThingworxRuntimeWidget, TWService, TWProperty } from './support/widgetRuntimeSupport'
+import { ThingworxRuntimeWidget, TWService, TWProperty } from 'typescriptwebpacksupport/widgetruntimesupport'
 import '@fullcalendar/core/locales-all'
 import { Calendar, OptionsInput, EventApi, EventInput, Duration, View } from '@fullcalendar/core'
 import { EventSourceError } from '@fullcalendar/core/structs/event-source'
