@@ -384,7 +384,7 @@ class CalendarWidget extends TWRuntimeWidget {
                 if (!this.states) return;
 
                 let dataRow = this.data.rows[event.extendedProps.dataIndex];
-                let isSelected = this.selectedIndices.indexOf(event.extendedProps.dataIndex) != -1;
+                let isSelected = this.selectedIndices.indexOf(event.extendedProps.dataIndex) != -1 || dataRow._isSelected;
 
                 let stateFormat = TW.getStyleFromStateFormatting({ DataRow: dataRow, StateFormatting: this.states });
                 
@@ -607,8 +607,8 @@ class CalendarWidget extends TWRuntimeWidget {
 
     }
 
-    handleSelectionUpdate(propertyName: string, selectedIndices: number[], selectedRows: any[]) {
-        this.selectedIndices = selectedIndices;
+    handleSelectionUpdate(propertyName: string, selectedRows: number[], selectedIndices: any[]) {
+        this.selectedIndices = selectedIndices || [];
         this.calendar.refetchEvents();
     }
 
