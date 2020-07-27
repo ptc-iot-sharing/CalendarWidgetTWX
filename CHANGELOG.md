@@ -1,5 +1,7 @@
 # 2.0.0
 
+Support for Thingworx 9.
+
 The version of FullCalendar used has been upgraded to v4. This removes dependency on jQuery and moment, both of which are included with Thingworx and can have breaking changes between Thingworx releases.
 
 A new **EventDescriptionField** property has been added that can be used to display a description or additional information for an event. This will appear below the event name using a lighter font.
