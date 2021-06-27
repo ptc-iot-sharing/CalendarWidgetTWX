@@ -1,5 +1,5 @@
 import { ThingworxRuntimeWidget, TWService, TWProperty } from 'typescriptwebpacksupport/widgetruntimesupport'
-import '@fullcalendar/core/locales-all'
+import * as allLocales from '@fullcalendar/core/locales-all'
 import { Calendar, OptionsInput, EventApi, EventInput, Duration, View } from '@fullcalendar/core'
 import { EventSourceError } from '@fullcalendar/core/structs/event-source'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -332,6 +332,7 @@ class CalendarWidget extends TWRuntimeWidget {
                 center: 'title',
                 right: this.view.indexOf(',') == -1 ? '' : this.view
             },
+            buttonIcons: false,
             editable: this.getProperty('Editable', false),
             eventDurationEditable: this.getProperty('Editable', false),
             eventStartEditable: this.getProperty('Editable', false),
@@ -340,6 +341,7 @@ class CalendarWidget extends TWRuntimeWidget {
             slotDuration: this.weekSlotDuration || '00:30:00',
             allDaySlot: this.showAllDaySlot === undefined ? true : this.showAllDaySlot,
             defaultView: this.view.indexOf(',') == -1 ? this.view : 'timeGridWeek',
+            locales: allLocales,
             locale: this.locale,
             height: this.jqElement[0].offsetHeight || 'auto',
             selectable: this.dragToSelect,
