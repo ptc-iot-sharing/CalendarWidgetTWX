@@ -1,3 +1,7 @@
+# 2.0.1
+
+Resolves an issue that caused locales to not affect the header button labels.
+
 # 2.0.0
 
 Support for Thingworx 9.
