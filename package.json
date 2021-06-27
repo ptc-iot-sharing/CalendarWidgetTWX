@@ -1,6 +1,6 @@
 {
     "name": "Calendar",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "Calendar widget",
     "thingworxServer": "http://localhost:8015",
     "thingworxUser": "Administrator",
@@ -51,10 +51,10 @@
         "zip-webpack-plugin": "^3.0.0"
     },
     "dependencies": {
-        "typescriptwebpacksupport": "^2.0.7",
-        "@fullcalendar/core": "^4.3.1",
-        "@fullcalendar/daygrid": "^4.3.0",
-        "@fullcalendar/timegrid": "^4.3.0",
-        "@fullcalendar/interaction": "^4.3.0"
+        "@fullcalendar/core": "^4.4.0",
+        "@fullcalendar/daygrid": "^4.4.0",
+        "@fullcalendar/interaction": "^4.4.0",
+        "@fullcalendar/timegrid": "^4.4.0",
+        "typescriptwebpacksupport": "^2.0.9"
     }
 }
